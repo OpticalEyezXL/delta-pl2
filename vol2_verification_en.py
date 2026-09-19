@@ -585,6 +585,50 @@ def appendix_Y10_rank_tower_so3():
 
 
 # ============================================================
+# Appendix AA. Representation-theoretic correspondence of the
+# stretching term (vol2 §10)
+# ============================================================
+
+def appendix_AA_stretching_term():
+    """(A) D(omega)/Dt = S*omega -- symbolic check in 3D
+       (B) d(d-1)/2 = d has the unique solution d=3 (d>0), via sympy solve"""
+    print("=== AA. Representation-theoretic correspondence of the stretching term ===")
+
+    x1, x2, x3 = sp.symbols('x1 x2 x3', real=True)
+    coords = [x1, x2, x3]
+    u1, u2, u3 = (sp.Function(f'u{i}')(x1, x2, x3) for i in (1, 2, 3))
+    u = [u1, u2, u3]
+
+    gradu = sp.Matrix(3, 3, lambda i, j: sp.diff(u[i], coords[j]))
+    S = sp.Rational(1, 2) * (gradu + gradu.T)
+    W = sp.Rational(1, 2) * (gradu - gradu.T)
+
+    omega = sp.Matrix([
+        sp.diff(u3, x2) - sp.diff(u2, x3),
+        sp.diff(u1, x3) - sp.diff(u3, x1),
+        sp.diff(u2, x1) - sp.diff(u1, x2),
+    ])
+
+    W_omega = sp.simplify(W * omega)
+    assert W_omega == sp.zeros(3, 1)
+    print("  W.omega = 0 (identically) -- confirmed")
+
+    stretching_direct = sp.simplify(gradu.T * omega)
+    S_omega = sp.simplify(S * omega)
+    assert sp.simplify(stretching_direct - S_omega) == sp.zeros(3, 1)
+    print("  (omega.grad)u = S.omega -- confirmed")
+
+    d = sp.symbols('d', positive=True)
+    solutions = sp.solve(sp.Eq(d * (d - 1) / 2, d), d)
+    assert solutions == [3]
+    print(f"  Solutions of d(d-1)/2=d (d>0): {solutions} -- confirmed")
+
+    adj7 = sp.Rational(7 * 6, 2)
+    assert adj7 != 7
+    print(f"  Note: at d=7, adjoint={adj7} != 7 -- the octonionic cross product is a separate mechanism\n")
+
+
+# ============================================================
 # Full run
 # ============================================================
 
@@ -616,6 +660,7 @@ if __name__ == "__main__":
     appendix_V_yukawa_potential()
     appendix_V_threshold_shift()
     appendix_Y10_rank_tower_so3()
+    appendix_AA_stretching_term()
 
     print("#"*60)
     print("# Full verification complete")
