@@ -7,7 +7,7 @@ Physical Laws II* (vol2) 논문에서 사용된 계산 검증 스크립트 모�
 
 | 파일 | 내용 |
 |---|---|
-| `vol2_verification.py` | 논문 부록(Appendix A–Y, AA)의 주요 계산을 sympy/numpy로 검증하는 스크립트. 네 극한, 랭크-2 조석장, 슈바르츠실트 일치, Kerr 고리특이점, SU(3) 닫힘, SU(2) 이중덮개, 나비에-스토크스 신장항의 표현론적 대응(Appendix AA) 등을 포함. |
+| `vol2_verification.py` | 논문 부록(Appendix A–Y, AA)의 주요 계산을 sympy/numpy로 검증하는 스크립트. 네 극한, 랭크-2 조석장, 슈바르츠실트 일치, Kerr 고리특이점, SU(3) 닫힘, SU(2) 이중덮개, 결합계 정칙성 계층 k*_joint=min(k*_1,k*_2)(Appendix P.3), 나비에-스토크스 신장항의 표현론적 대응(Appendix AA) 등을 포함. |
 | `vol2_verification_output.txt` | 위 스크립트의 실행 결과 로그. |
 
 ## 실행 방법

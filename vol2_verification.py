@@ -613,6 +613,41 @@ def appendix_AA_stretching_term():
 
 
 # ============================================================
+# Appendix P.3. 결합계 정칙성 계층 k*_joint = min(k*_1, k*_2) (vol2 §5.4 관련)
+# ============================================================
+
+def appendix_P3_joint_regularity():
+    """p-급수 정확 수렴판정(절단근사 아님)으로 세 극단 사례를 확인한다."""
+    print("=== P.3. 결합계 정칙성 계층 k*_joint = min(k*_1, k*_2) ===")
+    import math
+    n = sp.symbols('n', positive=True, integer=True)
+
+    def p_series_converges(exponent_value):
+        s = sp.Sum(n**exponent_value, (n, 1, sp.oo))
+        return bool(s.is_convergent())
+
+    def k_star(alpha):
+        return math.floor(alpha - 0.5 - 1e-12)
+
+    def check_case(name, alpha1, alpha2, k_range):
+        k1s, k2s = k_star(alpha1), k_star(alpha2)
+        predicted = min(k1s, k2s)
+        print(f"  [{name}] alpha1={alpha1}, alpha2={alpha2} -> k*_1={k1s}, k*_2={k2s}, 예측 k*_joint={predicted}")
+        for k in k_range:
+            term_j0 = p_series_converges(2*k - 2*alpha2) and p_series_converges(-2*alpha1)
+            term_jk = p_series_converges(2*k - 2*alpha1) and p_series_converges(-2*alpha2)
+            overall = term_j0 and term_jk
+            should = (k <= predicted)
+            assert overall == should, f"MISMATCH at k={k}"
+        print(f"    k={list(k_range)} 전 구간에서 예측과 일치 — 확인됨")
+
+    check_case("비대칭 낮음", 1.2, 2.4, range(0, 3))
+    check_case("대칭 높음", 5.0, 5.0, range(3, 6))
+    check_case("극단 비대칭", 0.6, 8.0, range(0, 3))
+    print()
+
+
+# ============================================================
 # 전체 실행
 # ============================================================
 
@@ -643,6 +678,7 @@ if __name__ == "__main__":
     appendix_T_weyl_dispersion()
     appendix_V_yukawa_potential()
     appendix_V_threshold_shift()
+    appendix_P3_joint_regularity()
     appendix_Y10_rank_tower_so3()
     appendix_AA_stretching_term()
 

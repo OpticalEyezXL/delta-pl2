@@ -9,7 +9,7 @@ Korean-commented originals and English translations are both included.
 
 | File | Description |
 |---|---|
-| `vol2_verification.py` / `vol2_verification_en.py` | Verifies the main calculations from the paper's appendices (Appendix A–Y, AA) using sympy/numpy: the four limits, the rank-2 tidal tensor, agreement with Schwarzschild, the Kerr ring singularity, SU(3) closure, the SU(2) double cover, the representation-theoretic correspondence of the Navier-Stokes stretching term (Appendix AA), and more. |
+| `vol2_verification.py` / `vol2_verification_en.py` | Verifies the main calculations from the paper's appendices (Appendix A–Y, AA) using sympy/numpy: the four limits, the rank-2 tidal tensor, agreement with Schwarzschild, the Kerr ring singularity, SU(3) closure, the SU(2) double cover, the joint regularity hierarchy k*_joint=min(k*_1,k*_2) (Appendix P.3), the representation-theoretic correspondence of the Navier-Stokes stretching term (Appendix AA), and more. |
 | `vol2_verification_output.txt` | Execution log of the above script (Korean version). |
 
 ## How to Run

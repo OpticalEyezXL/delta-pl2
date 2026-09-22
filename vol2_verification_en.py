@@ -585,6 +585,42 @@ def appendix_Y10_rank_tower_so3():
 
 
 # ============================================================
+# Appendix P.3. Joint regularity hierarchy k*_joint = min(k*_1, k*_2)
+# (vol2 section 5.4)
+# ============================================================
+
+def appendix_P3_joint_regularity():
+    """Exact p-series convergence test (no truncation) for three extreme cases."""
+    print("=== P.3. Joint regularity hierarchy k*_joint = min(k*_1, k*_2) ===")
+    import math
+    n = sp.symbols('n', positive=True, integer=True)
+
+    def p_series_converges(exponent_value):
+        s = sp.Sum(n**exponent_value, (n, 1, sp.oo))
+        return bool(s.is_convergent())
+
+    def k_star(alpha):
+        return math.floor(alpha - 0.5 - 1e-12)
+
+    def check_case(name, alpha1, alpha2, k_range):
+        k1s, k2s = k_star(alpha1), k_star(alpha2)
+        predicted = min(k1s, k2s)
+        print(f"  [{name}] alpha1={alpha1}, alpha2={alpha2} -> k*_1={k1s}, k*_2={k2s}, predicted k*_joint={predicted}")
+        for k in k_range:
+            term_j0 = p_series_converges(2*k - 2*alpha2) and p_series_converges(-2*alpha1)
+            term_jk = p_series_converges(2*k - 2*alpha1) and p_series_converges(-2*alpha2)
+            overall = term_j0 and term_jk
+            should = (k <= predicted)
+            assert overall == should, f"MISMATCH at k={k}"
+        print(f"    k={list(k_range)} all match prediction -- confirmed")
+
+    check_case("asymmetric-low", 1.2, 2.4, range(0, 3))
+    check_case("symmetric-high", 5.0, 5.0, range(3, 6))
+    check_case("extreme-asymmetric", 0.6, 8.0, range(0, 3))
+    print()
+
+
+# ============================================================
 # Appendix AA. Representation-theoretic correspondence of the
 # stretching term (vol2 §10)
 # ============================================================
@@ -659,6 +695,7 @@ if __name__ == "__main__":
     appendix_T_weyl_dispersion()
     appendix_V_yukawa_potential()
     appendix_V_threshold_shift()
+    appendix_P3_joint_regularity()
     appendix_Y10_rank_tower_so3()
     appendix_AA_stretching_term()
 
