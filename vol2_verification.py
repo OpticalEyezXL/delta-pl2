@@ -616,6 +616,41 @@ def appendix_AA_stretching_term():
 # Appendix P.3. 결합계 정칙성 계층 k*_joint = min(k*_1, k*_2) (vol2 §5.4 관련)
 # ============================================================
 
+# ============================================================
+# Appendix S.0. 실수축·회전축 누적량의 null 구조 (vol2 §8.2 관련)
+# ============================================================
+
+def appendix_S0_null_structure():
+    """A(t) = -log(Tr(C_t)/Tr(C_0)) ~ 2t + const 의 점근적 선형성,
+    그리고 지배모드 비율 c = A(t)/Phi(t) -> R(inf) = 2 를 확인한다."""
+    print("=== S.0. 실수축·회전축 누적량의 null 구조 ===")
+
+    def trace_Ct(t, alpha=2.0, N=200000):
+        n = np.arange(1, N + 1)
+        return np.sum(n ** (-2 * alpha) * np.exp(-2 * n ** 2 * t))
+
+    def R_numeric(t, alpha=2.0, h=1e-6, N=200000):
+        f1 = trace_Ct(t + h, alpha, N)
+        f0 = trace_Ct(t - h, alpha, N)
+        return -(np.log(f1) - np.log(f0)) / (2 * h)
+
+    alpha = 2.0
+    Tr0 = trace_Ct(1e-6, alpha)
+    consts = []
+    for t in [1.0, 2.0, 5.0, 10.0]:
+        A = -np.log(trace_Ct(t, alpha) / Tr0)
+        consts.append(A - 2 * t)
+    spread = max(consts) - min(consts)
+    assert spread < 1e-3, "A(t)-2t가 상수로 수렴하지 않음"
+    print(f"  A(t)-2t 수렴 확인 (t>=1 구간 최대-최소 차 {spread:.2e}) -> 기울기 2 = R(inf)")
+
+    for t in [10.0, 100.0]:
+        A = -np.log(trace_Ct(t, alpha) / Tr0)
+        c = A / t  # Phi(t) ~ t (dominant mode n=1)
+        print(f"  t={t}: c = A(t)/Phi(t) = {c:.6f} (-> 2)")
+    print()
+
+
 def appendix_P3_joint_regularity():
     """p-급수 정확 수렴판정(절단근사 아님)으로 세 극단 사례를 확인한다."""
     print("=== P.3. 결합계 정칙성 계층 k*_joint = min(k*_1, k*_2) ===")
@@ -678,6 +713,7 @@ if __name__ == "__main__":
     appendix_T_weyl_dispersion()
     appendix_V_yukawa_potential()
     appendix_V_threshold_shift()
+    appendix_S0_null_structure()
     appendix_P3_joint_regularity()
     appendix_Y10_rank_tower_so3()
     appendix_AA_stretching_term()
