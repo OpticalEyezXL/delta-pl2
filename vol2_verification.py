@@ -621,8 +621,9 @@ def appendix_AA_stretching_term():
 # ============================================================
 
 def appendix_S0_null_structure():
-    """A(t) = -log(Tr(C_t)/Tr(C_0)) ~ 2t + const 의 점근적 선형성,
-    그리고 지배모드 비율 c = A(t)/Phi(t) -> R(inf) = 2 를 확인한다."""
+    """A(t) = -log(Tr(C_t)/Tr(C_0)) ~ 2t + log(zeta(2*alpha)) 의 점근적 선형성,
+    alpha=2는 Appendix A.5의 자기쌍대 조건이 고정한 원시 C_0의 값(자유매개변수 아님).
+    지배모드 비율 c = A(t)/Phi(t) -> R(inf) = 2, 부지배모드 편차 -> (1/2)log(zeta(4))."""
     print("=== S.0. 실수축·회전축 누적량의 null 구조 ===")
 
     def trace_Ct(t, alpha=2.0, N=200000):
@@ -634,7 +635,7 @@ def appendix_S0_null_structure():
         f0 = trace_Ct(t - h, alpha, N)
         return -(np.log(f1) - np.log(f0)) / (2 * h)
 
-    alpha = 2.0
+    alpha = 2.0  # 자기쌍대 조건(Appendix A.5)이 고정한 원시 C_0의 값
     Tr0 = trace_Ct(1e-6, alpha)
     consts = []
     for t in [1.0, 2.0, 5.0, 10.0]:
@@ -644,10 +645,19 @@ def appendix_S0_null_structure():
     assert spread < 1e-3, "A(t)-2t가 상수로 수렴하지 않음"
     print(f"  A(t)-2t 수렴 확인 (t>=1 구간 최대-최소 차 {spread:.2e}) -> 기울기 2 = R(inf)")
 
+    zeta4 = np.pi**4 / 90
+    log_zeta4 = np.log(zeta4)
+    assert abs(consts[-1] - log_zeta4) < 1e-3
+    print(f"  상수 = log(zeta(4)) = {log_zeta4:.6f} = log(Tr(C_0)) 확인됨")
+
+    diffs = []
     for t in [10.0, 100.0]:
         A = -np.log(trace_Ct(t, alpha) / Tr0)
         c = A / t  # Phi(t) ~ t (dominant mode n=1)
+        diffs.append(A / 2 - t)
         print(f"  t={t}: c = A(t)/Phi(t) = {c:.6f} (-> 2)")
+    assert abs(diffs[-1] - log_zeta4 / 2) < 1e-3
+    print(f"  부지배모드 편차 -> (1/2)log(zeta(4)) = {log_zeta4/2:.6f}, 발산/진동 없이 포화")
     print()
 
 

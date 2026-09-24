@@ -40,7 +40,27 @@ def main():
     assert spread < 1e-3, "A(t)-2t가 상수로 수렴하지 않음"
     print("-> A(t) ~ 2t + const, 점근적 선형성 확인됨 (기울기 2 = R(inf))")
 
-    # 지배모드 근사: Phi(t) ~ t (n=1), 비율 c = A(t)/Phi(t) -> 2
+    # 상수의 정체: log(zeta(2*alpha))
+    zeta_2a = np.pi**4 / 90  # zeta(4), alpha=2 -> 2*alpha=4
+    log_zeta = np.log(zeta_2a)
+    print(f"\nzeta(2*alpha)=zeta(4) = {zeta_2a:.10f}")
+    print(f"log(zeta(4)) = {log_zeta:.6f}  (관측된 상수와 대조)")
+    assert abs(consts[-1] - log_zeta) < 1e-3, "상수가 log(zeta(4))와 불일치"
+    print("-> 상수 = log(Tr(C_0)) = log(zeta(2*alpha)) 확인됨")
+
+    # 지배모드 근사와 정확한 가중평균 위상의 편차 -> (1/2) log(zeta(2 alpha))로 수렴
+    print("\n=== 지배모드 근사 vs 가중평균 위상의 편차 ===")
+    for t in [0.5, 1, 2, 5, 10, 50, 100]:
+        A = -np.log(trace_Ct(t, alpha) / Tr0)
+        Phi_exact = A / 2
+        Phi_dom = t
+        diff = Phi_exact - Phi_dom
+        print(f"  t={t:6.1f}: Phi_exact-Phi_dom = {diff:.6f}")
+    print(f"  -> (1/2)*log(zeta(4)) = {log_zeta/2:.6f} (수렴값과 대조)")
+    assert abs(diff - log_zeta/2) < 1e-3, "편차가 (1/2)log(zeta(4))로 수렴하지 않음"
+    print("-> 부지배 모드의 편차는 (1/2)log(Tr(C_0))로 정확히 포화, 발산/진동 없음")
+
+    # 지배모드 궤적의 null 비율 c = A(t)/Phi(t) -> 2
     print("\n=== 지배모드 궤적의 null 비율 c = A(t)/Phi(t) -> R(inf) = 2 ===")
     for t in [10.0, 50.0, 100.0]:
         A = -np.log(trace_Ct(t, alpha) / Tr0)
